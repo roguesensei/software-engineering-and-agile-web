@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { loadTest } from './store/test';
+import { Button, Typography } from '@mui/material';
 
 export default function App() {
 	const [test, setTest] = useState([]);
@@ -10,16 +11,15 @@ export default function App() {
 		})();
 	},[]);
 
-  return (
-	<>
- 	  	<h1>Test</h1>
-		<ul>
-			{
-				test.map((x) => <li>{x}</li>)
-			}
-		</ul>
-	</>
-
-  );
+  	return (
+		<>
+ 	  		<Typography variant={'h1'}>Test</Typography>
+			<ul>
+				{
+					test.map((x) => <li>{x}</li>)
+				}
+			</ul>
+			<Button variant={'contained'}>Hello World</Button>
+		</>
+	);
 }
-

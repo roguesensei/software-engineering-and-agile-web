@@ -13,9 +13,6 @@ def setup_server():
 	cur.execute(create_user_table_sql)
 	cur.close()
 
-	admin = User('admin', 'Admin123!', 3)
-	add_user(admin)
-
 	# client = pymongo.MongoClient(server_config['db_config']['connection_string'])
 	# db = client[server_config['db_config']['db_name']]
 

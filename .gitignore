@@ -161,3 +161,6 @@ cython_debug/
 
 # Database
 *.db
+
+# Secret key
+.secret.key

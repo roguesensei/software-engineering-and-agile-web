@@ -1,5 +1,7 @@
-from flask import Flask, jsonify, request
 import json
+
+from flask import Flask, jsonify, request
+from util.server_setup import setup_server
 
 app = Flask(__name__)
 
@@ -18,4 +20,5 @@ def test():
 
 
 if __name__ == '__main__':
-    app.run(debug = True)
+	setup_server()
+	app.run(debug = True)

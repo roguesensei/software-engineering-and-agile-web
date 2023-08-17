@@ -12,7 +12,6 @@ def generate_key() -> None:
 def load_key() -> bytes:
 	secret_key = server_config['secret_key_file_path']
 	if not os.path.exists(secret_key):
-		print('kek')
 		generate_key()
 
 	with open(secret_key, 'rb') as f:

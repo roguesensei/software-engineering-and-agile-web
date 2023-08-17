@@ -15,9 +15,8 @@ def get_users() -> list[User]:
 	for row in rows:
 		user = User(row[0], UserRole(row[2]))
 		user.password_hash = row[1]
-
 		users.append(user)
-	
+
 	return users
 
 def add_user(user: User) -> None:

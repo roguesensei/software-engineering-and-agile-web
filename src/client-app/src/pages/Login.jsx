@@ -19,9 +19,10 @@ export default function Login() {
 	return (
 		<form onSubmit={async(e) => {
 			e.preventDefault();
+			sessionStorage.clear();
 
 			let res = await auth(form);
-			if (res.ok){
+			if (res.ok) {
 				let bod = await res.json();
 
 				sessionStorage.setItem('jwt', bod['token']);

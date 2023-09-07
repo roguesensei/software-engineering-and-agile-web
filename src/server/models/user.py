@@ -3,8 +3,7 @@ from util.crypto import encrypt
 
 class UserRole(Enum):
 	GUEST = 0,
-	SUPERVISOR = 1,
-	ADMIN = 2
+	ADMIN = 1
 
 class User:
 	def __init__(self, _username: str, _role: UserRole = UserRole.GUEST):

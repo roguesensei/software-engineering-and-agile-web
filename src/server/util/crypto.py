@@ -22,7 +22,7 @@ def encrypt(msg: str) -> bytes:
 
 	return Fernet(key).encrypt(msg.encode())
 
-def decrypt(tok: bytes) -> bytes:
+def decrypt(tok: bytes) -> str:
 	key = load_key()
 
-	return Fernet(key).decrypt(tok)
+	return Fernet(key).decrypt(tok).decode()

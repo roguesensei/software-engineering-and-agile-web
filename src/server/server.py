@@ -21,22 +21,48 @@ def login():
 	username = request.json.get('username', None)
 	password = request.json.get('password', None)
 	if username == '' or password == '':
+		print('Missing fields')
 		return jsonify({'error': 'Missing Required fields'}), 401
 
-	users = get_users()
 	id_user = None
-	for user in users:
-		if user.username.lower() == username.lower() and decrypt(user.password_hash) == password:
-			id_user = user
-			break
+	try:
+		users = get_users()
+		for user in users:
+			print(decrypt(user.password_hash))
+			if user.username.lower() == username.lower() and decrypt(user.password_hash) == password:
+				id_user = user
+				break
+	except Exception as e:
+		print('Something went horribly wrong', e)
+		return jsonify({'error': 'Internal server error'}), 500
 
 	if id_user is None:
-		return jsonify({'error': 'User does not exist'}), 401
+		print('User not found')
+		return jsonify({'error': 'Invalid username or password'}), 401
 
-	access_token = create_access_token(identity={username: username, user_id: id_user.user_id})
+	access_token = create_access_token(identity=id_user.user_id)
 
 	return jsonify({'token': access_token})
 
+
+@app.route('/getUsers', methods=['GET'])
+@jwt_required()
+def load_users():
+	try:
+		users = get_users()
+		arr = []
+
+		for user in users:
+			arr.append({
+				'userId': user.user_id,
+				'userName': user.username,
+				'role': user.role.value
+			})
+
+		return jsonify(arr)
+	except Exception as e:
+		print(e)
+		return jsonify('Internal server error'), 500
 
 if __name__ == '__main__':
 	setup_server()

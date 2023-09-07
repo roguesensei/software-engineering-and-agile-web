@@ -9,7 +9,7 @@ def setup_server():
 	con = sqlite3.connect(server_config['db_file_path'])
 	cur = con.cursor()
 
-	cur.execute(create_user_table_sql)
+	cur.execute(__create_user_table_sql)
 	cur.close()
 
 	users = get_users()
@@ -18,14 +18,7 @@ def setup_server():
 		default_admin.set_password('Admin123!')
 		add_user(default_admin)
 
-	# client = pymongo.MongoClient(server_config['db_config']['connection_string'])
-	# db = client[server_config['db_config']['db_name']]
-
-	# if (len(db.list_collection_names()) == 0):
-	# 	tbl = db['test']
-	# 	tbl.insert_many(server_config['default_users'])
-
-create_user_table_sql = '''
+__create_user_table_sql = '''
 CREATE TABLE IF NOT EXISTS user
 (
 	username VARCHAR(50) NOT NULL,

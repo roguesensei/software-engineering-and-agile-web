@@ -6,7 +6,7 @@ from util.server_config import server_config
 def get_users() -> list[User]:
 	con = sqlite3.connect(server_config['db_file_path'])
 	cur = con.cursor()
-	cur.execute(get_sql)
+	cur.execute(__get_sql)
 
 	rows = cur.fetchall()
 	con.close()
@@ -24,11 +24,11 @@ def add_user(user: User) -> None:
 	con = sqlite3.connect(server_config['db_file_path'])
 	cur = con.cursor()
 
-	cur.execute(add_sql, (user.username, user.password_hash, user.role.value))
+	cur.execute(__add_sql, (user.username, user.password_hash, user.role.value))
 	con.commit()
 	cur.close()
 
-get_sql = '''
+__get_sql = '''
 SELECT
 	u.rowid,
 	u.username,
@@ -37,7 +37,7 @@ SELECT
 FROM user u
 '''
 
-add_sql = '''
+__add_sql = '''
 INSERT INTO user 
 (
 	username, 

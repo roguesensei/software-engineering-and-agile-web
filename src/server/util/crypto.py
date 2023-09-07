@@ -4,7 +4,6 @@ from cryptography.fernet import Fernet
 from util.server_config import server_config
 
 def generate_key() -> None:
-	print('gen')
 	key = Fernet.generate_key()
 
 	with open(server_config['secret_key_file_path'], 'wb') as f:

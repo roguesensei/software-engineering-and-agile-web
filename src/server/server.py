@@ -2,8 +2,10 @@ import json
 
 from flask import Flask, jsonify, request, redirect
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
+from dal.course_dal import get_courses
+from dal.user_dal import get_users, add_user
 from util.crypto import decrypt
-from util.server_setup import setup_server, get_users, User
+from util.server_setup import setup_server
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'super-secret-qa-jwt-key' # Not best practice
@@ -55,8 +57,28 @@ def load_users():
 		for user in users:
 			arr.append({
 				'userId': user.user_id,
-				'userName': user.username,
+				'username': user.username,
 				'role': user.role.value
+			})
+
+		return jsonify(arr)
+	except Exception as e:
+		print(e)
+		return jsonify('Internal server error'), 500
+
+@app.route('/getCourses', methods=['GET'])
+@jwt_required()
+def load_courses():
+	try:
+		courses = get_courses()
+		arr = []
+
+		for course in courses:
+			arr.append({
+				'courseId': course.course_id,
+				'name': course.name,
+				'instructorId': course.instructor_id,
+				'description': course.description
 			})
 
 		return jsonify(arr)

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { loadUsers, roleOpt } from '../store/user';
+import { loadUsers, userRoleOpt } from '../store/user';
 import BaseGrid from '../components/BaseGrid';
 
 export default function UserSettings(){
@@ -14,7 +14,7 @@ export default function UserSettings(){
 	const columns = useMemo(() => {
 		return [
 			{
-				field: 'userName',
+				field: 'username',
 				headerName: 'Username',
 				width: 300
 			},
@@ -23,7 +23,7 @@ export default function UserSettings(){
 				headerName: 'Role',
 				width: 200,
 				valueGetter:({row}) => {
-					return roleOpt.filter((x) => x.value === row.role)[0]?.label || 'Unknown'
+					return userRoleOpt.filter((x) => x.value === row.role)[0]?.label || 'Unknown'
 				}
 			}
 		]

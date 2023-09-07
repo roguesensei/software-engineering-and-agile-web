@@ -8,6 +8,7 @@ import Login from './pages/Login';
 
 import './App.css';
 import UserSettings from './pages/UserSettings';
+import CourseSettings from './pages/CourseSettings';
 
 export default function App() {
 
@@ -17,6 +18,7 @@ export default function App() {
 			<Routes>
 				<Route path={'/'}>
 					<Route path={'/'} element={<Home/>} />
+					<Route path={'/courses'} element={<CourseSettings/>} />
 					<Route path={'/users'} element={<UserSettings />} />
 				</Route>
 				<Route path={'/auth'}>

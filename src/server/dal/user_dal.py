@@ -13,8 +13,9 @@ def get_users() -> list[User]:
 
 	users: list[User] = []
 	for row in rows:
-		user = User(row[0], UserRole(row[2]))
-		user.password_hash = row[1]
+		user = User(row[1], UserRole(row[3]))
+		user.user_id = row[0]
+		user.password_hash = row[2]
 		users.append(user)
 
 	return users
@@ -23,12 +24,13 @@ def add_user(user: User) -> None:
 	con = sqlite3.connect(server_config['db_file_path'])
 	cur = con.cursor()
 
-	cur.execute(add_sql, (user.username, user.password_hash.decode(), user.role.value))
+	cur.execute(add_sql, (user.username, user.password_hash, user.role.value))
 	con.commit()
 	cur.close()
 
 get_sql = '''
 SELECT
+	u.rowid,
 	u.username,
 	u.password_hash,
 	u.role

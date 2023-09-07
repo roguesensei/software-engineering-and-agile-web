@@ -2,7 +2,8 @@ import json
 
 from flask import Flask, jsonify, request, redirect
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
-from util.server_setup import setup_server
+from util.crypto import decrypt
+from util.server_setup import setup_server, get_users, User
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'super-secret-qa-jwt-key' # Not best practice
@@ -12,7 +13,7 @@ jwt = JWTManager(app)
 @jwt_required()
 def authenticated():
 	curr_user = get_jwt_identity()
-	print(curr_user)
+
 	return jsonify('authorised')
 
 @app.route('/login', methods = ['POST'])
@@ -22,9 +23,19 @@ def login():
 	if username == '' or password == '':
 		return jsonify({'error': 'Missing Required fields'}), 401
 
-	access_token = create_access_token(identity=username)
+	users = get_users()
+	id_user = None
+	for user in users:
+		if user.username.lower() == username.lower() and decrypt(user.password_hash) == password:
+			id_user = user
+			break
 
-	return jsonify({'token': access_token, 'user_id': 0})
+	if id_user is None:
+		return jsonify({'error': 'User does not exist'}), 401
+
+	access_token = create_access_token(identity={username: username, user_id: id_user.user_id})
+
+	return jsonify({'token': access_token})
 
 # Test route
 # @app.route('/test', methods = ['GET', 'POST'])

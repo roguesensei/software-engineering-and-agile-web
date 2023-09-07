@@ -4,6 +4,7 @@ from cryptography.fernet import Fernet
 from util.server_config import server_config
 
 def generate_key() -> None:
+	print('gen')
 	key = Fernet.generate_key()
 
 	with open(server_config['secret_key_file_path'], 'wb') as f:
@@ -22,7 +23,7 @@ def encrypt(msg: str) -> bytes:
 
 	return Fernet(key).encrypt(msg.encode())
 
-def decrypt(tok: bytes) -> str:
+def decrypt(tok: bytes) -> bytes:
 	key = load_key()
 
-	return Fernet(key).decrypt(tok).decode()
+	return Fernet(key).decrypt(tok)

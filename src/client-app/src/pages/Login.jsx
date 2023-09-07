@@ -6,8 +6,7 @@ import { useNavigate } from 'react-router';
 export default function Login() {
 	const [form, setForm] = useState({
 		username: '',
-		password: '',
-		clientId: 'web-qa-lms'
+		password: ''
 	});
 	const [error, setError] = useState();
 	const navigate = useNavigate();

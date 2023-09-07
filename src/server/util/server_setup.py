@@ -29,7 +29,7 @@ create_user_table_sql = '''
 CREATE TABLE IF NOT EXISTS user
 (
 	username VARCHAR(50) NOT NULL,
-	password_hash TEXT NOT NULL,
+	password_hash BLOB NOT NULL,
 	role INT NOT NULL DEFAULT(0)
 );
 '''

@@ -11,12 +11,13 @@ app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'super-secret-qa-jwt-key' # Not best practice
 jwt = JWTManager(app)
 
-@app.route('/auth', methods = ['GET'])
+@app.route('/getCurrentUser', methods = ['GET'])
 @jwt_required()
-def authenticated():
+def get_current_user():
 	curr_user = get_jwt_identity()
+	print(curr_user)
 
-	return jsonify('authorised')
+	return jsonify(curr_user)
 
 @app.route('/login', methods = ['POST'])
 def login():
@@ -42,10 +43,9 @@ def login():
 		print('User not found')
 		return jsonify({'error': 'Invalid username or password'}), 401
 
-	access_token = create_access_token(identity=id_user.user_id)
+	access_token = create_access_token(identity={'user_id': id_user.user_id, 'username': id_user.username, 'role': id_user.role.value})
 
 	return jsonify({'token': access_token})
-
 
 @app.route('/getUsers', methods=['GET'])
 @jwt_required()

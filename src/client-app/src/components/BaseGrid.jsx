@@ -1,7 +1,7 @@
 import React from 'react';
-import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Add, Delete, Edit } from '@mui/icons-material';
 
 export default function BaseGrid({columns, rows, getRowId, onAdd = () => {}}) {
 	return (
@@ -14,6 +14,28 @@ export default function BaseGrid({columns, rows, getRowId, onAdd = () => {}}) {
 	);
 }
 
+export function EditAction({onClick = () => {}}) {
+	return (
+		<GridActionsCellItem
+			icon={<Edit />}
+			label={'Edit'}
+			onClick={onClick}
+			color={'inherit'}
+		/>
+	)
+}
+
+export function DeleteAction({onClick = () => {}}) {
+	return (
+		<GridActionsCellItem
+			icon={<Delete />}
+			label={'Delete'}
+			onClick={onClick}
+			color={'inherit'}
+		/>
+	)
+}
+
 function GridToolbar({onAdd = () => {} }) {
 	return (
 		<GridToolbarContainer>
@@ -24,7 +46,6 @@ function GridToolbar({onAdd = () => {} }) {
 }
 
 function AddRowButton({ onClick = () => {} }) {
-	
 	return (
 	<Button
 		size='small'

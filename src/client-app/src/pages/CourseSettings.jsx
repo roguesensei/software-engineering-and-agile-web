@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
-import { loadCourses } from '../store/course';
+import { addCourse, deleteCourse, editCourse, loadCourses } from '../store/course';
 import { loadUsers, userRoles } from '../store/user';
-import BaseGrid from '../components/BaseGrid';
+import BaseGrid, { DeleteAction, EditAction } from '../components/BaseGrid';
 import { loadCurrentUser } from '../store/auth';
 import Toast from '../components/Toast';
 import useToast from '../util/toast';
 import BaseDrawer from '../components/BaseDrawer';
 import { TextField } from '@mui/material';
 import DropDownList from '../components/DropdownList';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 export default function CourseSettings() {
 	const [data, setData] = useState([]);
@@ -17,6 +18,8 @@ export default function CourseSettings() {
 	const [courseTitle, setCourseTitle] = useState('');
 	const [courseDescription, setCourseDescription] = useState('');
 	const [instructorId, setInstructorId] = useState(null);
+	const [editId, setEditId] = useState(null);
+	const [deleteId, setDeleteId] = useState(null);
 	const [editDrawerOpen, setEditDrawerOpen] = useState(false);
 
 	const [courseTitleError, setCourseTitleError] = useState(false);
@@ -24,11 +27,24 @@ export default function CourseSettings() {
 	const [instructorIdError, setInstructorIdError] = useState(false);
 
 	const toastHandler = useToast();
-	const {toast} = toastHandler;
+	const { toast } = toastHandler;
+
+	const reload = async() => {
+		setData(await loadCourses());
+	}
+
+	const hasPermission = () => {
+		// Check current user is an admin
+		let permitted = currentUser.role === userRoles.Admin
+		if (!permitted) {
+			toast('You need to be an admin to do that', 'warning');
+		}
+		return permitted;
+	}
 
 	useEffect(() => {
 		(async () => {
-			setData(await loadCourses());
+			await reload();
 		})();
 	}, []);
 
@@ -65,6 +81,29 @@ export default function CourseSettings() {
 				valueGetter: ({row}) => {
 					return instructors.filter((x) => x.userId === row.instructorId)[0]?.username
 				}
+			},
+			{
+				field: 'actions',
+				type: 'actions',
+				cellClassName: 'actions',
+				headerName: 'Actions',
+				width: 100,
+				getActions: ({ id, row }) => [
+					<DeleteAction onClick={() => {
+						if (hasPermission()) {
+							setDeleteId(id);
+						}
+					}} />,
+					<EditAction onClick={() => {
+						if (hasPermission()) {
+							setEditId(id);
+							setCourseTitle(row.name);
+							setCourseDescription(row.description);
+							setInstructorId(row.instructorId);
+							setEditDrawerOpen(true);
+						}
+					}} />
+				]
 			}
 		]
 	}, [instructors]);
@@ -76,19 +115,16 @@ export default function CourseSettings() {
 				rows={data}
 				getRowId={(x) => x.courseId}
 				onAdd={() => {
-					if (currentUser.role === userRoles.Admin){
+					if (hasPermission()) {
 						setCourseTitle('');
 						setCourseDescription('');
 						setInstructorId(null);
 						setEditDrawerOpen(true);
 					}
-					else {
-						toast('You need to be an admin to do that', 'warning');
-					}
 				}}
 			/>
 			<BaseDrawer
-				title={'Edit Course'}
+				title={!!editId ? 'Edit Course' : 'Add Course'}
 				open={editDrawerOpen}
 				onAction={() => {
 					if (courseTitleError || courseDescriptionError) {
@@ -109,8 +145,39 @@ export default function CourseSettings() {
 					if (!valid) {
 						toast('Missing one or more required fields', 'warning');
 					}
+					else {
+						if (!!editId) {
+							editCourse(editId, courseTitle, courseDescription, instructorId).then((ok) => {
+								if (ok) {
+									toast('Updated course successfully', 'success');
+									setEditDrawerOpen(false);
+									setEditId(null);
+									reload();
+								}
+								else {
+									toast('An unknown error occured', 'error');
+								}
+							})
+						}
+						else {
+							addCourse(courseTitle, courseDescription, instructorId)
+								.then((ok) => {
+									if (ok) {
+										toast('Added new course successfully', 'success');
+										setEditDrawerOpen(false);
+										reload();	
+									}
+									else {
+										toast('An unknown error occured', 'error');
+									}
+								})
+						}
+					}
 				}}
-				onClose={() => setEditDrawerOpen(false)}
+				onClose={() => {
+					setEditDrawerOpen(false);
+					setEditId(null);
+				}}
 			>
 				<div style={{margin: 8}}>
 					<TextField
@@ -155,6 +222,25 @@ export default function CourseSettings() {
 					/>
 				</div>
 			</BaseDrawer>
+			<ConfirmDialog
+				open={!!deleteId}
+				title={'Are you sure you want to delete this item?'}
+				onNo={() => setDeleteId(null)}
+				onYes={() => {
+					deleteCourse(deleteId)
+						.then((ok) => {
+							if (ok) {
+								toast('Deleted course successfully', 'success');
+								setEditDrawerOpen(false);
+								reload();	
+							}
+							else {
+								toast('An unknown error occured', 'error');
+							}
+							setDeleteId(null);
+						});
+				}}
+			/>
 			<Toast toastHandler={toastHandler} />
 		</>
 	);

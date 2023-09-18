@@ -9,7 +9,7 @@ export const userRoles = {
 export const userRoleOpt = Object.keys(userRoles).map((x) => ({label: x, value: userRoles[x]}));
 
 export async function loadUsers() {
-	let res = await httpGet('/getUsers');
+	let res = await httpGet('/user/get');
 
 	if (res.ok) {
 		return await res.json();

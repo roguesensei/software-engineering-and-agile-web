@@ -30,7 +30,7 @@ def add_user(user: User) -> None:
 
 __get_sql = '''
 SELECT
-	u.rowid,
+	u.user_id,
 	u.username,
 	u.password_hash,
 	u.role

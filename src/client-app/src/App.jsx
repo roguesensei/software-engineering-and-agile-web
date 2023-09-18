@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import './App.css';
 import UserSettings from './pages/UserSettings';
 import CourseSettings from './pages/CourseSettings';
+import EnrolmentSettings from './pages/EnrolmentSettings';
 
 export default function App() {
 
@@ -19,7 +20,8 @@ export default function App() {
 				<Route path={'/'}>
 					<Route path={'/'} element={<Home/>} />
 					<Route path={'/courses'} element={<CourseSettings/>} />
-					<Route path={'/users'} element={<UserSettings />} />
+					<Route path={'/users'} element={<UserSettings />} />,
+					<Route path={'/enrolments'} element={<EnrolmentSettings />} />,
 				</Route>
 				<Route path={'/auth'}>
 					<Route path={'login'} element={<Login />} />

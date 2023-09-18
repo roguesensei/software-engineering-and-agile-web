@@ -2,11 +2,9 @@ import { httpGet, httpPost } from '../util/request';
 
 export async function loadCourses() {
 	let res = await httpGet('/course/get');
-
 	if (res.ok) {
 		return await res.json();
 	}
-
 	return [];
 }
 

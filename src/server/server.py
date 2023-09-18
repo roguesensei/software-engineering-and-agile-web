@@ -3,6 +3,7 @@ import json
 from flask import Flask, jsonify, request, redirect
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from dal.course_dal import Course, get_courses, add_course, edit_course, delete_course
+from dal.enrolment_dal import Enrolment, get_enrolments
 from dal.user_dal import get_users
 from util.crypto import decrypt
 from util.server_setup import setup_server
@@ -12,7 +13,6 @@ app.config['JWT_SECRET_KEY'] = 'super-secret-qa-jwt-key' # Not best practice
 jwt = JWTManager(app)
 
 # Core routes
-
 @app.route('/getCurrentUser', methods = ['GET'])
 @jwt_required()
 def get_current_user():
@@ -84,7 +84,7 @@ def course_get():
 				'description': course.description
 			})
 
-		return jsonify(arr)
+		return jsonify(arr), 200
 	except Exception as e:
 		print(e)
 		return jsonify('Internal server error'), 500
@@ -122,6 +122,28 @@ def course_delete():
 	delete_course(course_id)
 	return jsonify(True), 200
 
+# Enrolment routes
+@app.route('/enrolment/get', methods=['GET'])
+@jwt_required()
+def enrolment_get():
+	try:
+		enrolments = get_enrolments()
+		arr = []
+
+		for enrolment in enrolments:
+			arr.append({
+				'enrolmentId': enrolment.enrolment_id,
+				'courseId': enrolment.course_id,
+				'userId': enrolment.user_id,
+				'courseDate': enrolment.course_date
+			})
+
+		return jsonify(arr), 200
+	except Exception as e:
+		print(e)
+		return jsonify('Internal server error'), 500
+
+# Main
 if __name__ == '__main__':
 	setup_server()
 	app.run(debug = True)

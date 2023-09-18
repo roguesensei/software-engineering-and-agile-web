@@ -106,7 +106,7 @@ export default function CourseSettings() {
 				]
 			}
 		]
-	}, [instructors]);
+	}, [instructors, hasPermission]);
 
 	return (
 		<>

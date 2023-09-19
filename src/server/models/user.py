@@ -1,12 +1,7 @@
-from enum import Enum
 from util.crypto import encrypt
 
-class UserRole(Enum):
-	GUEST = 0,
-	ADMIN = 1
-
 class User:
-	def __init__(self, _username: str, _role: UserRole = UserRole.GUEST):
+	def __init__(self, _username: str, _role: int = 0):
 		self.user_id = 0
 		self.username = _username
 		self.role = _role
@@ -17,4 +12,4 @@ class User:
 	user_id: int
 	username: str
 	password_hash: bytes
-	role: UserRole
+	role: int

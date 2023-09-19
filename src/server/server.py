@@ -4,9 +4,9 @@ from flask import Flask, jsonify, request, redirect
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from dal.course_dal import Course, get_courses, add_course, edit_course, delete_course
 from dal.enrolment_dal import Enrolment, get_enrolments, add_enrolment, edit_enrolment, delete_enrolment
-from dal.user_dal import User, get_users, add_user
+from dal.user_dal import get_users
 from util.crypto import decrypt
-from util.server_setup import setup_server
+from util.server_setup import User, setup_server, add_user
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'super-secret-qa-jwt-key' # Not best practice
@@ -41,7 +41,7 @@ def login():
 	if id_user is None:
 		return jsonify({'error': 'Invalid username or password'}), 401
 
-	access_token = create_access_token(identity={'user_id': id_user.user_id, 'username': id_user.username, 'role': id_user.role.value})
+	access_token = create_access_token(identity={'username': id_user.username, 'role': id_user.role})
 
 	return jsonify({'token': access_token})
 
@@ -70,24 +70,15 @@ def register():
 	new_user = User(username)
 	new_user.set_password(password)
 
-	# Add new user, then retrieve it to verify transaction was successful
-	add_user(new_user)
+	# Add new user
 	try:
-		users = get_users()
-		for user in users:
-			if user.username.lower() == username.lower():
-				id_user = user
-				break
-	except Exception as e:
-		print('Something went wrong', e)
-		return jsonify({'error': 'Internal server error'}), 500
-	
-	if id_user is None:
-		return jsonify({'error': 'Something went wrong adding the user'}), 404
-	
-	access_token = create_access_token(identity={'user_id': id_user.user_id, 'username': id_user.username, 'role': id_user.role.value})
+		add_user(new_user)
+		access_token = create_access_token(identity={'username': new_user.username, 'role': new_user.role})
 
-	return jsonify({'token': access_token})
+		return jsonify({'token': access_token})
+	except Exception as e:
+		print(e)
+		return jsonify({'error': 'Could not register the user'}), 500
 
 
 
@@ -103,7 +94,7 @@ def user_get():
 			arr.append({
 				'userId': user.user_id,
 				'username': user.username,
-				'role': user.role.value
+				'role': user.role
 			})
 
 		return jsonify(arr)

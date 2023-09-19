@@ -1,6 +1,6 @@
 import sqlite3
 
-from models.user import User, UserRole
+from models.user import User
 from util.server_config import server_config
 
 def get_users() -> list[User]:
@@ -13,7 +13,7 @@ def get_users() -> list[User]:
 
 	users: list[User] = []
 	for row in rows:
-		user = User(row[1], UserRole(row[3]))
+		user = User(row[1], row[3])
 		user.user_id = row[0]
 		user.password_hash = row[2]
 		users.append(user)
@@ -24,7 +24,7 @@ def add_user(user: User) -> None:
 	con = sqlite3.connect(server_config['db_file_path'])
 	cur = con.cursor()
 
-	cur.execute(__add_sql, (user.username, user.password_hash, user.role.value))
+	cur.execute(__add_sql, (user.username, user.password_hash, user.role))
 	con.commit()
 	cur.close()
 

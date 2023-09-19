@@ -1,7 +1,7 @@
 import sqlite3
 
 from dal.user_dal import add_user, get_users
-from models.user import User, UserRole
+from models.user import User
 from util.server_config import server_config
 from util.crypto import generate_key
 
@@ -18,7 +18,7 @@ def setup_server():
 	# Create a default admin user if no users exist
 	users = get_users()
 	if len(users) == 0:
-		default_admin = User('Admin', UserRole.ADMIN)
+		default_admin = User('Admin', 1)
 		default_admin.set_password('Admin123!')
 		add_user(default_admin)
 

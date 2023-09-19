@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { isAuthenticated } from '../store/auth';
 
 export default function Home() {
@@ -7,12 +7,15 @@ export default function Home() {
 			let authed = await isAuthenticated();
 
 			if (!authed) {
-				window.location.href = '/auth/login'
+				window.location.href = '/auth/login';
+			}
+			else {
+				window.location.href = '/enrolments';
 			}
 		})();
 	},[]);
 
 	return (
-		<p>Hello</p>
+		<p>Loading</p>
 	)
 }

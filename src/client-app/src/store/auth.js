@@ -26,3 +26,15 @@ export async function auth(form) {
 
 	return res;
 }
+
+export async function register(form) {
+	let res = await fetch('/register', {
+		method: 'POST',
+		headers: {
+			'content-type': 'application/json'
+		},
+		body: JSON.stringify(form)
+	});
+
+	return res;
+}

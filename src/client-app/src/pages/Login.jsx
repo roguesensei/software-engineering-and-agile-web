@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { auth, isAuthenticated } from '../store/auth';
+import { useState } from 'react'
+import { auth, register } from '../store/auth';
 import { Alert, Button, Card, Divider, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 
@@ -62,7 +62,29 @@ export default function Login() {
 				{error ? <Alert sx={(theme) => ({ marginTop: theme.spacing(1) })} severity='error'>{error}</Alert> : null}
 				<Divider sx={(theme) => ({ width: '80%', marginTop: theme.spacing(1) })} />
 				<Button sx={(theme) => ({ marginTop: theme.spacing(2), width: '100%' })} type='submit' variant='contained'>Login</Button>
-		</Card>
+				<Button 
+					sx={(theme) => ({ marginTop: theme.spacing(2), width: '100%' })} 
+					onClick={() => {
+						sessionStorage.clear();
+						(async() => {
+							let res = await register(form);
+							if (res.ok) {
+								let bod = await res.json();
+
+								sessionStorage.setItem('jwt', bod['token']);
+								navigate('/');
+							}
+							else {
+								let err = await res.json();
+								setError(err['error']);
+							}
+						})();
+
+					}}
+				>
+					Register
+				</Button>
+			</Card>
 		</form>
 	)
 }

@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request, redirect
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from dal.course_dal import Course, get_courses, add_course, edit_course, delete_course
 from dal.enrolment_dal import Enrolment, get_enrolments, add_enrolment, edit_enrolment, delete_enrolment
-from dal.user_dal import get_users
+from dal.user_dal import User, get_users, add_user
 from util.crypto import decrypt
 from util.server_setup import setup_server
 
@@ -25,28 +25,71 @@ def login():
 	username = request.json.get('username', None)
 	password = request.json.get('password', None)
 	if username == '' or password == '':
-		print('Missing fields')
 		return jsonify({'error': 'Missing Required fields'}), 401
 
 	id_user = None
 	try:
 		users = get_users()
 		for user in users:
-			print(decrypt(user.password_hash))
 			if user.username.lower() == username.lower() and decrypt(user.password_hash) == password:
 				id_user = user
 				break
 	except Exception as e:
-		print('Something went horribly wrong', e)
+		print('Something went wrong', e)
 		return jsonify({'error': 'Internal server error'}), 500
 
 	if id_user is None:
-		print('User not found')
 		return jsonify({'error': 'Invalid username or password'}), 401
 
 	access_token = create_access_token(identity={'user_id': id_user.user_id, 'username': id_user.username, 'role': id_user.role.value})
 
 	return jsonify({'token': access_token})
+
+@app.route('/register', methods = ['POST'])
+def register():
+	username = request.json.get('username', None)
+	password = request.json.get('password', None)
+	if username == '' or password == '':
+		return jsonify({'error': 'Missing Required fields'}), 401
+	
+	# Check user with given username doesn't already exist
+	id_user = None
+	try:
+		users = get_users()
+		for user in users:
+			if user.username.lower() == username.lower():
+				id_user = user
+				break
+	except Exception as e:
+		print('Something went wrong', e)
+		return jsonify({'error': 'Internal server error'}), 500
+	
+	if id_user is not None:
+		return jsonify({'error': 'User with that username already exists'}), 401
+	
+	new_user = User(username)
+	new_user.set_password(password)
+
+	# Add new user, then retrieve it to verify transaction was successful
+	add_user(new_user)
+	try:
+		users = get_users()
+		for user in users:
+			if user.username.lower() == username.lower():
+				id_user = user
+				break
+	except Exception as e:
+		print('Something went wrong', e)
+		return jsonify({'error': 'Internal server error'}), 500
+	
+	if id_user is None:
+		return jsonify({'error': 'Something went wrong adding the user'}), 404
+	
+	access_token = create_access_token(identity={'user_id': id_user.user_id, 'username': id_user.username, 'role': id_user.role.value})
+
+	return jsonify({'token': access_token})
+
+
 
 # User routes
 @app.route('/user/get', methods=['GET'])

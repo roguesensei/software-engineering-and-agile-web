@@ -3,7 +3,7 @@ import json
 from flask import Flask, jsonify, request, redirect
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from dal.course_dal import Course, get_courses, add_course, edit_course, delete_course
-from dal.enrolment_dal import Enrolment, get_enrolments
+from dal.enrolment_dal import Enrolment, get_enrolments, add_enrolment, edit_enrolment, delete_enrolment
 from dal.user_dal import get_users
 from util.crypto import decrypt
 from util.server_setup import setup_server
@@ -142,6 +142,39 @@ def enrolment_get():
 	except Exception as e:
 		print(e)
 		return jsonify('Internal server error'), 500
+
+@app.route('/enrolment/add', methods=['POST'])
+@jwt_required()
+def enrolment_add():
+	body = request.json
+	enrolment = Enrolment()
+	enrolment.course_id = body.get('courseId', None)
+	enrolment.user_id = body.get('userId', None)
+	enrolment.course_date = body.get('courseDate', None)
+
+	add_enrolment(enrolment)
+	return jsonify(True), 200
+
+@app.route('/enrolment/update', methods=['POST'])
+@jwt_required()
+def enrolment_update():
+	body = request.json
+	enrolment = Enrolment()
+	enrolment.enrolment_id = body.get('enrolmentId', None)
+	enrolment.course_id = body.get('courseId', None)
+	enrolment.user_id = body.get('userId', None)
+	enrolment.course_date = body.get('courseDate', None)
+
+	edit_enrolment(enrolment)
+	return jsonify(True), 200
+
+@app.route('/enrolment/delete', methods=['POST'])
+@jwt_required()
+def enrolment_delete():
+	enrolment_id = request.json.get('enrolmentId')
+
+	delete_enrolment(enrolment_id)
+	return jsonify(True), 200
 
 # Main
 if __name__ == '__main__':

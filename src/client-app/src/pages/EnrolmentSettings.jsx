@@ -8,7 +8,9 @@ import useToast from '../util/toast';
 import BaseDrawer from '../components/BaseDrawer';
 import DropDownList from '../components/DropdownList';
 import ConfirmDialog from '../components/ConfirmDialog';
-import { loadEnrolments } from '../store/enrolment';
+import { addEnrolment, deleteEnrolment, editEnrolment, loadEnrolments } from '../store/enrolment';
+import dayjs from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers';
 
 export default function EnrolmentSettings() {
 	const [data, setData] = useState([]);
@@ -18,6 +20,7 @@ export default function EnrolmentSettings() {
 	
 	const [courseId, setCourseId] = useState(null);
 	const [userId, setUserId] = useState(null);
+	const [courseDate, setCourseDate] = useState(dayjs())
 	const [editId, setEditId] = useState(null);
 	const [deleteId, setDeleteId] = useState(null);
 	const [editDrawerOpen, setEditDrawerOpen] = useState(false);
@@ -86,8 +89,7 @@ export default function EnrolmentSettings() {
 			{
 				field: 'courseDate',
 				headerName: 'Course Date',
-				type: 'dateTime',
-				width: 150
+				width: 200
 			},
 			{
 				field: 'actions',
@@ -106,6 +108,7 @@ export default function EnrolmentSettings() {
 							setEditId(id);
 							setCourseId(row.courseId);
 							setUserId(row.userId);
+							setCourseDate(dayjs(row.courseDate));
 							setEditDrawerOpen(true);
 						}
 					}} />
@@ -119,11 +122,12 @@ export default function EnrolmentSettings() {
 			<BaseGrid
 				columns={columns}
 				rows={data}
-				getRowId={(x) => x.courseId}
+				getRowId={(x) => x.enrolmentId}
 				onAdd={() => {
 					if (hasPermission()) {
 						setCourseId(null);
 						setUserId(null);
+						setCourseDate(dayjs())
 						setEditDrawerOpen(true);
 					}
 				}}
@@ -147,30 +151,30 @@ export default function EnrolmentSettings() {
 					}
 					else {
 						if (!!editId) {
-							// editCourse(editId, courseTitle, courseDescription, instructorId).then((ok) => {
-							// 	if (ok) {
-							// 		toast('Updated course successfully', 'success');
-							// 		setEditDrawerOpen(false);
-							// 		setEditId(null);
-							// 		reload();
-							// 	}
-							// 	else {
-							// 		toast('An unknown error occured', 'error');
-							// 	}
-							// })
+							editEnrolment(editId, courseId, userId, courseDate).then((ok) => {
+								if (ok) {
+									toast('Updated enrolment successfully', 'success');
+									setEditDrawerOpen(false);
+									setEditId(null);
+									reload();
+								}
+								else {
+									toast('An unknown error occured', 'error');
+								}
+							})
 						}
 						else {
-							// addCourse(courseTitle, courseDescription, instructorId)
-							// 	.then((ok) => {
-							// 		if (ok) {
-							// 			toast('Added new course successfully', 'success');
-							// 			setEditDrawerOpen(false);
-							// 			reload();	
-							// 		}
-							// 		else {
-							// 			toast('An unknown error occured', 'error');
-							// 		}
-							// 	})
+							addEnrolment(courseId, userId, courseDate.toISOString())
+								.then((ok) => {
+									if (ok) {
+										toast('Added new enrolment successfully', 'success');
+										setEditDrawerOpen(false);
+										reload();	
+									}
+									else {
+										toast('An unknown error occured', 'error');
+									}
+								})
 						}
 					}
 				}}
@@ -210,6 +214,12 @@ export default function EnrolmentSettings() {
 						label={'Student'}
 						style={styles.field}
 					/>
+					<DatePicker
+						value={courseDate}
+						onChange={setCourseDate}
+						label={'Course Date'}
+						sx={{marginTop: 2}}
+					/>
 				</div>
 			</BaseDrawer>
 			<ConfirmDialog
@@ -217,18 +227,18 @@ export default function EnrolmentSettings() {
 				title={'Are you sure you want to delete this item?'}
 				onNo={() => setDeleteId(null)}
 				onYes={() => {
-					// deleteCourse(deleteId)
-					// 	.then((ok) => {
-					// 		if (ok) {
-					// 			toast('Deleted course successfully', 'success');
-					// 			setEditDrawerOpen(false);
-					// 			reload();	
-					// 		}
-					// 		else {
-					// 			toast('An unknown error occured', 'error');
-					// 		}
-					// 		setDeleteId(null);
-					// 	});
+					deleteEnrolment(deleteId)
+						.then((ok) => {
+							if (ok) {
+								toast('Deleted enrolment successfully', 'success');
+								setEditDrawerOpen(false);
+								reload();	
+							}
+							else {
+								toast('An unknown error occured', 'error');
+							}
+							setDeleteId(null);
+						});
 				}}
 			/>
 			<Toast toastHandler={toastHandler} />

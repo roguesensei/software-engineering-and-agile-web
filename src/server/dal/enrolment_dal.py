@@ -18,18 +18,28 @@ def get_enrolments() -> list[Enrolment]:
 		enrolment.enrolment_id = row[0]
 		enrolment.course_id = row[1]
 		enrolment.user_id = row[2]
-		enrolment.course_date = datetime(row[3])
+		enrolment.course_date = row[3]
 
 		enrolments.append(enrolment)
 	return enrolments
 
 def add_enrolment(enrolment: Enrolment) -> None:
-	pass
+	con = sqlite3.connect(server_config['db_file_path'])
+	cur = con.cursor()
+	
+	cur.execute(__add_sql, (enrolment.course_id, enrolment.user_id, enrolment.course_date))
+	con.commit()
+	cur.close()
 
 def edit_enrolment(enrolment: Enrolment) -> None:
-	pass
+	con = sqlite3.connect(server_config['db_file_path'])
+	cur = con.cursor()
+	
+	cur.execute(__edit_sql, (enrolment.course_id, enrolment.user_id, enrolment.course_date, enrolment.enrolment_id))
+	con.commit()
+	cur.close()
 
-def delete_course(enrolment_id: int) -> None:
+def delete_enrolment(enrolment_id: int) -> None:
 	con = sqlite3.connect(server_config['db_file_path'])
 	cur = con.cursor()
 	
@@ -48,20 +58,20 @@ FROM enrolment e
 '''
 
 __add_sql = '''
-INSERT INTO course (name, description, instructor_id)
+INSERT INTO enrolment (course_id, user_id, course_date)
 VALUES (?, ?, ?)
 '''
 
 __edit_sql = '''
-UPDATE course
+UPDATE enrolment
 SET
-	name = ?,
-	description = ?,
-	instructor_id = ?
-WHERE course_id = ?
+	course_id = ?,
+	user_id = ?,
+	course_date = ?
+WHERE enrolment_id = ?
 '''
 
 __delete_sql = '''
-DELETE FROM course
-WHERE course_id = ?
+DELETE FROM enrolment
+WHERE enrolment_id = ?
 '''

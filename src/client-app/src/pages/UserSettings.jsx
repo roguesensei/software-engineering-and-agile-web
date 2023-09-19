@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { loadUsers, userRoleOpt } from '../store/user';
 import BaseGrid from '../components/BaseGrid';
+import Layout from '../components/Layout';
 
 export default function UserSettings(){
 	const [data, setData]= useState([]);
@@ -30,10 +31,12 @@ export default function UserSettings(){
 	}, []);
 
 	return (
-		<BaseGrid
-			columns={columns}
-			rows={data}
-			getRowId={(x) => x.userId}
-		/>
+		<Layout>
+			<BaseGrid
+				columns={columns}
+				rows={data}
+				getRowId={(x) => x.userId}
+			/>
+		</Layout>
 	);
 }

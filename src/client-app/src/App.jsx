@@ -11,7 +11,8 @@ import UserSettings from './pages/UserSettings';
 import CourseSettings from './pages/CourseSettings';
 import EnrolmentSettings from './pages/EnrolmentSettings';
 
-import './App.css';
+//import './App.css';
+import Layout from './components/Layout';
 
 export default function App() {
 

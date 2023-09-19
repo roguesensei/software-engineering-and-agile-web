@@ -9,6 +9,7 @@ import BaseDrawer from '../components/BaseDrawer';
 import { TextField } from '@mui/material';
 import DropDownList from '../components/DropdownList';
 import ConfirmDialog from '../components/ConfirmDialog';
+import Layout from '../components/Layout';
 
 export default function CourseSettings() {
 	const [data, setData] = useState([]);
@@ -109,7 +110,7 @@ export default function CourseSettings() {
 	}, [instructors, hasPermission]);
 
 	return (
-		<>
+		<Layout>
 			<BaseGrid
 				columns={columns}
 				rows={data}
@@ -242,7 +243,7 @@ export default function CourseSettings() {
 				}}
 			/>
 			<Toast toastHandler={toastHandler} />
-		</>
+		</Layout>
 	);
 }
 

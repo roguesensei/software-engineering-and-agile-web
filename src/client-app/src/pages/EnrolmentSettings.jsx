@@ -11,6 +11,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import { addEnrolment, deleteEnrolment, editEnrolment, loadEnrolments } from '../store/enrolment';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers';
+import Layout from '../components/Layout';
 
 export default function EnrolmentSettings() {
 	const [data, setData] = useState([]);
@@ -118,7 +119,7 @@ export default function EnrolmentSettings() {
 	}, [users, courses, hasPermission]);
 
 	return (
-		<>
+		<Layout>
 			<BaseGrid
 				columns={columns}
 				rows={data}
@@ -242,7 +243,7 @@ export default function EnrolmentSettings() {
 				}}
 			/>
 			<Toast toastHandler={toastHandler} />
-		</>
+		</Layout>
 	);
 }
 

@@ -6,11 +6,11 @@ const TranscendentDrawer = styled(Drawer)(({ theme }) => ({
 	zIndex: theme.zIndex.drawer + 2
 }));
 
-export default function BaseDrawer({children, title, open, onClose = () => {}, onAction = () => {}}){
+export default function BaseDrawer({children, title, open, showAction = true, anchor = 'right', onClose = () => {}, onAction = () => {}}){
 	return (
 		<TranscendentDrawer
 			variant={'temporary'}
-			anchor={'right'}
+			anchor={anchor}
 			open={open}
 			onClose={onClose}
 		>
@@ -32,9 +32,11 @@ export default function BaseDrawer({children, title, open, onClose = () => {}, o
 					<div style={{ overflowY: 'auto', flexGrow: 1 }}>
 						{children}
 					</div>
-					<Button variant={'contained'} onClick={onAction}>
-						{title}
-					</Button>
+					{showAction ?
+						<Button variant={'contained'} onClick={onAction}>
+							{title}
+						</Button> : null
+					}
 				</Box>
 			</div>
 		</TranscendentDrawer>

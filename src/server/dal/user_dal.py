@@ -28,6 +28,22 @@ def add_user(user: User) -> None:
 	con.commit()
 	cur.close()
 
+def update_user(user_id: int, role: int) -> None:
+	con = sqlite3.connect(server_config['db_file_path'])
+	cur = con.cursor()
+
+	cur.execute(__edit_sql, (role, user_id))
+	con.commit()
+	cur.close()
+
+def delete_user(user_id: int) -> None:
+	con = sqlite3.connect(server_config['db_file_path'])
+	cur = con.cursor()
+	
+	cur.execute(__delete_sql, str(user_id)) # Cast to string to prevent exception
+	con.commit()
+	cur.close()
+
 __get_sql = '''
 SELECT
 	u.user_id,
@@ -45,4 +61,16 @@ INSERT INTO user
 	role
 )
 VALUES (?, ?, ?)
+'''
+
+__edit_sql = '''
+UPDATE user
+SET
+	role = ?
+WHERE user_id = ?
+'''
+
+__delete_sql = '''
+DELETE FROM user
+WHERE user_id = ?
 '''

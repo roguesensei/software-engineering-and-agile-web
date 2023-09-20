@@ -1,6 +1,6 @@
 import BaseDrawer from './BaseDrawer';
 import { ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { Person, School, Subscriptions } from '@mui/icons-material';
+import { Logout, Person, School, Subscriptions } from '@mui/icons-material';
 
 export default function NavMenu({ open, onClose }){
 	return (
@@ -23,6 +23,10 @@ export default function NavMenu({ open, onClose }){
 				<NavMenuItem text={'Users'} Icon={Person} open={open} onClick={() => {
 					window.location.href = '/users';
 					onClose();
+				}} />
+				<NavMenuItem text={'Log out'} Icon={Logout} open={open} onClick={() => {
+					sessionStorage.clear();
+					window.location.href = '/';
 				}} />
 			</BaseDrawer>
 		</header>

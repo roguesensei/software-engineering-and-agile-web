@@ -1,10 +1,9 @@
-import { httpGet } from '../util/request';
+import { httpGet, httpPost } from '../util/request';
 
 export const userRoles = {
 	'Guest': 0,
 	'Admin': 1 
 };
-
 
 export const userRoleOpt = Object.keys(userRoles).map((x) => ({label: x, value: userRoles[x]}));
 
@@ -16,4 +15,16 @@ export async function loadUsers() {
 	}
 
 	return [];
+}
+
+export async function editUser(userId, role) {
+	let res = await httpPost('/user/update', { userId, role });
+
+	return res.ok;
+}
+
+export async function deleteUser(userId) {
+	let res = await httpPost('/user/delete', { userId });
+
+	return res.ok;
 }

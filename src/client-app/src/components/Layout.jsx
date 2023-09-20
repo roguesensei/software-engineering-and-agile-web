@@ -1,12 +1,13 @@
-import { AppBar, Divider, IconButton, Menu, Paper, Toolbar } from '@mui/material';
+import { AppBar, Divider, IconButton, Paper, Toolbar } from '@mui/material';
 import { useState } from 'react';
 import NavMenu from './NavMenu';
+import { Menu } from '@mui/icons-material';
 
 export default function Layout({ children }) {
 	const [navMenuOpen, setNavMenuOpen] = useState(false);
 
 	return (
-		<div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', background: '#f2f2f3' }}>
+		<div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', background: '#313869', height:'100vh' }}>
 			<AppBar position='static' color='secondary' sx={(theme) => ({ zIndex: theme.zIndex.drawer + 1 })}>
 				<Toolbar variant='dense' sx={{ justifyContent: 'space-between' }}>
 					<div style={{ display: 'flex' }}>
@@ -22,19 +23,19 @@ export default function Layout({ children }) {
 					</div>
 				</Toolbar>
 			</AppBar>
-			{/* <div style={{ flexGrow: 1, display: 'flex' }}> */}
-				<NavMenu open={navMenuOpen} onClose={() => setNavMenuOpen(false)} />
-				<Paper style={{
-					position: 'static',
-					flexGrow: 1,
-					display: 'flex',
-					alignItems: 'stretch',
-					flexDirection: 'column',
-					maxHeight: '90vh'
-				}}>
-					{children}
-				</Paper>
-			{/* </div> */}
+			<NavMenu open={navMenuOpen} onClose={() => setNavMenuOpen(false)} />
+			<Paper style={{
+				position: 'static',
+				flexGrow: 1,
+				display: 'flex',
+				alignItems: 'stretch',
+				flexDirection: 'column',
+				maxHeight: '100vh',
+				padding: 8,
+				margin: 8
+			}}>
+				{children}
+			</Paper>
 		</div>
 	)
 }

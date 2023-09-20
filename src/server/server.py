@@ -4,9 +4,9 @@ from flask import Flask, jsonify, request, redirect
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from dal.course_dal import Course, get_courses, add_course, edit_course, delete_course
 from dal.enrolment_dal import Enrolment, get_enrolments, add_enrolment, edit_enrolment, delete_enrolment
-from dal.user_dal import get_users
+from dal.user_dal import User, get_users, add_user, update_user, delete_user
 from util.crypto import decrypt
-from util.server_setup import User, setup_server, add_user
+from util.server_setup import setup_server
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'super-secret-qa-jwt-key' # Not best practice
@@ -101,6 +101,25 @@ def user_get():
 	except Exception as e:
 		print(e)
 		return jsonify('Internal server error'), 500
+
+@app.route('/user/update', methods=['POST'])
+@jwt_required()
+def user_update():
+	body = request.json
+	user_id = body.get('userId', None)
+	role = body.get('role', None)
+
+	update_user(user_id, role)
+	return jsonify(True), 200
+
+@app.route('/user/delete', methods=['POST'])
+@jwt_required()
+def user_delete():
+	body = request.json
+	user_id = body.get('userId', None)
+
+	delete_user(user_id)
+	return jsonify(True), 200
 
 # Course routes
 @app.route('/course/get', methods=['GET'])

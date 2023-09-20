@@ -3,7 +3,7 @@ import { DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarExport 
 import { Button } from '@mui/material';
 import { Add, Delete, Edit } from '@mui/icons-material';
 
-export default function BaseGrid({columns, rows, getRowId, onAdd = () => {}}) {
+export default function BaseGrid({ columns, rows, getRowId, onAdd }) {
 	return (
 		<DataGrid
 			columns={columns}
@@ -36,10 +36,13 @@ export function DeleteAction({onClick = () => {}}) {
 	)
 }
 
-function GridToolbar({onAdd = () => {} }) {
+function GridToolbar({ onAdd  }) {
 	return (
 		<GridToolbarContainer>
-			<AddRowButton onClick={onAdd} />
+			{
+				onAdd ? 
+					<AddRowButton onClick={onAdd} /> : null
+			}
 			<GridToolbarExport />
 		</GridToolbarContainer>
 	);

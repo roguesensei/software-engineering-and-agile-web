@@ -6,7 +6,7 @@ const TranscendentDrawer = styled(Drawer)(({ theme }) => ({
 	zIndex: theme.zIndex.drawer + 2
 }));
 
-export default function BaseDrawer({children, title, open, showAction = true, anchor = 'right', onClose = () => {}, onAction = () => {}}){
+export default function BaseDrawer({ children, title, open, showAction = true, anchor = 'right', onClose = () => {}, onAction = () => {} }){
 	return (
 		<TranscendentDrawer
 			variant={'temporary'}
